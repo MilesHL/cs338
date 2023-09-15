@@ -1,0 +1,38 @@
+Miles Hoene-Langdon
+
+===== DAYTIME =====
+1. TCP 3-way handshake
+  1 192.168.64.2  129.6.15.28  TCP [SYN]      Seq=0 Win=64260 Len=0 MSS=1460 SACK_Perm TSv...
+  2 129.6.15.28   192,168.64.2 TCP [SYN, ACK] Seq=0 Ack=1 Win=65535 Len=0 MSS=1368 WS...
+  3 192.168.64.2  129.6.15.28  TCP [ACK]      Seq=q Ack=1 Win=64256 Len=0
+2. NC on my Kali computer uses port 52790.
+3. The client needs a port so the server knows where to send the information to so it can be properly processed.
+4. The fourth fram contains the date and time.
+  4 129.6.15.28   192.168.64.2 DAYTIME  DAYTIME Response
+5. The full content of the frame's Daytime Protocol is as follows:
+    Type: Response
+    Daytime: \n60202 23-09-15 16:27:45 50 0 0 284.2 UTC(NIST) *\n
+  The first number under daytime is the Modified Julian Date. The next set of numbers is the year, date, and month. The next
+  numbers are the time in hours, minutes, and seconds. The next number indicates whether the US is on daylight savings time.
+  The fifth number specifies whether the leap second will be added at midnight on the last day of this month. The sixth number
+  indicates the health of the server and the seventh is the number of milliseconds advanced due to network delays. The following
+  letters indicate that this is UTC from NIST.
+6. [SYN] stands for synchronize and is used to initiate a connection between the client and the server.
+7. [ACK] stands for acknowledgement and it is used to confirm that packets have been properly received.
+8. [FIN] stands for finish and it is used to close a connection between the server and client.
+9. The daytime server initiated the closing of the TCP connection. I know this because the daytime server sent the first [FIN]
+   packet.
+
+===== HTTP =====
+1. In the initial TCP handshake there are two TCP connections established between the client and the server. I know this because
+there are four [SYN] packets at the start where two client ports are connected to the port 80 of of the server in two TCP handshakes.
+2. I am able to tell where index.html was requested. This is in the fifth frame which is displayed as follows:
+      5 192.168.64.2  45.79.89.123 HTTP  GET /index.html HTTP/1.1
+   This is clearly where the homepage is requested as the source is the client and the packet info is a GET request for the homepage.
+3. I am able to tell where jeff_square_head.jpg is requested. This requested is the 11th frame which is displayed as follows:
+      11 192.168.64.2 45..79.89.123 HTTP GET /jeff_square_head.jpg HTTP/1.1
+  This is clearly where jeff_square_head.jpg is requested as the source is the client and the packet info is a GET request for the immage.
+
+===== QUESTIONS =====
+Would wireshark not work if your homepage used https? If it does work, then how would it differ?
+What do Seq and Win mean under packet info?
