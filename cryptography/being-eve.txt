@@ -1,0 +1,48 @@
+Miles Hoene-Langdon
+
+Diffie Hellman
+
+The secret agreed upon by Alice and Bob is 6. 
+
+To solve for this secret I created a python program. In this program I first define the given values of g, p, a (the number Alice sent Bob), and b (the number Bob sent Alice). Then, I set up
+a for loop that goes through all the integers 0-p (as a and b will be less than p). Each of these integers (i) is then tested for being candidates for x or y.
+Specifically I use two if statements that check if a == (g ** i) % p and if b == (g ** i) % p. If the former statement is
+true, then the current integer of the loop is assigned to the value x and if the latter statement is true, then the current integer is
+assigned to the value y. When both x and y have been assigned, the loop is broken. These values x and y are respectively the secrete number of Alice and Bob. In this case x = 41 and y = 23. Finally,
+taking these values, my program prints the results of the operations (b ** x) % p and (a ** y) % p. These are the equations for Bob
+and Alice to respectively solver for their shared secret number. In this case, both opperations output 6, so I know the math
+was done correctly for both ways.
+
+The place in process that fails if the integers involved are much larger is where my program checks, in a for loop, if the
+statements a == (g ** i) % p and b == (g ** i) % p are satisfied. Python has troubling doing these modulous operations when
+p is large as the indexes i that are tested will be larger. Also, my program will have to perform more of these since the range 0-p will be larger. Infacct, when p is sufficiently large, my
+program is no longer feasibly for solving for the secret number due to time constraints and computing power.
+
+RSA
+
+The encrypted message sent from Alice to Bob is "Hi Bob. I'm walking from now on. Your pal, Alice. https://foundation.mozilla.org/en/priv
+acynotincluded/articles/its-official-cars-are-the-worst-product-category-we-have-ever-reviewed-for-privacy/".
+
+To decrypt the encrypt message I created a python program. In this program I first assign the given variables of e_Bob, n_Bob, and encryptedData. Then, I created a function that finds p_Bob
+and q_Bob. This function works by taking n_Bob as a parameter and using a for loop, of the integers i in range(2, n), that tests whether the statement (n / i) % 1 == 0 is satisfied. This statement 
+tests whether the current integer i divides n. If this is the case, we have found p_Bob and we find q_Bob my taking n // p_Bob. The values p_Bob and q_Bob are the prime factors of n_Bob. My program
+then uses these prime factors of n to solve for lambda(n_Bob), which is the least common multiple of p_Bob - 1 and q_Bob - 1. I find this least common multiple by using the lcm function of numpy.
+Now that we have lambda(n_Bob) = lambdaN_Bob, we can solve for d_Bob with another for loop of integers (j) in range(lambda(n_Bob)). To find d_Bob each of the integers in the for loop is tested whether they satisfy
+the statement (e_Bob * i) % lambdaN_Bob == 1. When this statement is true, the program assignes the current j to be d_Bob and breaks the for loop. Thus, the program
+solves for d_Bob by brute force. Now, the program decryptes the message. We state with an empty string variable message and use a for loop that goes through all message blocks of the encrypted string (m).
+The program takes each m and solves for bt = bin((m ** dB) % nB)[2:], which binary of the decrypte value of m. The program then uses a for loop
+to add zeros to the start of bt until it has a length of 16 bits. Now that we have the 16-bit value of the decripted message, the program takes this value and splits it in half and converts each
+half to ASCII characters and adds them to the message variable string in order (message += chr(int(bt[:8], 2)) + chr(int(bt[8:], 2))). Once the for loop finishes, the program prints the message variable
+and the encrypted message is solved.
+
+If the integers involved (e_Bob and n_Bob) were much larger, then my program would have failed where it calculates the prime factos of n_Bob. It would take a rediculous amount of time
+to sort through all of the integers less than n_Bob and greater than 1 and test whether they evenly divide n_Bob. The other for loops would also take too long as lambdaN_Bob would also be larger.
+
+The message encoding Alice used would be insecure even if Bob's keys involved larger integers because it is a simple subistitution cipher. Substituting two letters is better than one, but it could still by possibly
+decrypted with letter frequences or letter pair frequencies. It would be more secure to make sure that letter pairs are not always encoded the same way. Also, there is the matter of making sure that there isn't a 
+malfactor between Alice and Bob. Alice cannot be completely sure that Bob's public key is the one that Bob intends. Thus, another system is needed to make sure that no one comes between Bob and Alice and is able to
+trick the two.
+
+
+
+
