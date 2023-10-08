@@ -1,0 +1,48 @@
+Miles Hoene-Langdon
+
+Simple Communication Senarios
+
+1. In the case that Alice wants to send Bob a message with no possiblity of man in the middle attacks, the Diffie-Hellman key exchange procedure is appropriate. Thus, to start
+Alice and Bob use Diffie-Hellman to agree on a shared secret key K. Alice then uses AES with K to get AES(K, M). Alice then sends AES(K, M) to
+Bob. Bob can then uses AES with K AES_D(K, AES(K, M)) to get M. This plan achieves the goal as there is no possibility of man in the middle attacks Diffie-Hellman is
+not vulnerable. Eve will not be able to read AES(K, H(M)) becuase she does not have K. In order for Eve to get K Eve would have to calculate the
+secret number of Bob or Alice which is difficult given a sufficiently chosen p and g value.
+
+2. In the case that Alice wants to wants to send Bob a long message and she doesn't want Mal to be able to modify the message without Bob detecting the change, we will use a
+public/secret key pair for Alice. That is Alice will have a secret key and a public key that are respectively S_A and P_A. Alice
+will take the long message M and use SHA-256 to get H(M), then Alice will use her secret Key to get encryt the hash function digest
+to get E(S_A, H(M)). Alice will then send E(S_A, H(M)) to Bob. Bob can then use Alice's public key to decode and get E(P_A, E(S_A, H(M))). From
+this Bob gets H(M). Thus, using SHA-256 Bob finally gets H(H(M)) which is M. Bob will know if Mal edited the message because decryption with Alices public
+key will not work. Mal does not know S_A, so Mal cannot send messages in this manner that look like they come from Alice. Also, Mal cannot successfully edit
+messages from Alice.
+
+3. Next is the case that Alice wants to send Bob a message with no possiblity of man in the middle attacks and Alice wants Bob to be confident that Bob was the sender. The Diffie-Hellman
+key exchange procedure is appropriate for making sure Eve cannot read the message. We will also use a puliic/secret key pair for Alice, so Bob has confidence that Alice is the source of the
+message. Thus, to start Alice and Bob use Diffie-Hellman to agree on a shared secret key K. Alice then uses AES with K to get AES(K, M). Alice then will use her secret key S_A to encrypt the SHA-256
+output of AES(K, M). That is Alice gets E(S_A, H(AES(K, M))) and then sends it to Bob. Bob can then use Alice's public key to get E(P_A, E(S_A, H(AES(K, M)))) = H(AES(K, M)). Next Bob uses SHA-256 to get
+H(H(AES(K, M))) = AES(K, M). Finaly Bob uses AES with K AES_D(K, AES(K, M)) to get M. This plan achieves the goal as there is no possibility of man in the middle attacks Diffie-Hellman is
+not vulnerable. Eve will not be able to read AES(K, H(M)) becuase she does not have K. In order for Eve to get K Eve would have to calculate the
+secret number of Bob or Alice which is difficult given a sufficiently chosen p and g value. Also, Bob knows that the message came from Alice because only Alice knows S_A, so only Alice can
+send messages that are successfully decrypted with P_A.
+
+Questions About Breaking Security
+
+4. (1) Alice could claim that there was a data-breach and her private key got leaked. This would seems very plausable as if another person knew the secret key they could easily pretend to be Alice
+and give Bob a false contract that checks out completely instead of the real contract. (2) Alice could also claim that there was a colision in the hash function where the digest for the contract Alice claims to have
+sent and the contract Bob received are the same. This would seem to be extremely implausable because colision are extremely rare. Also, it could easily be tested by applying the hash function if Alice has the alleged
+contract. (3) Lastly, Alice could claim that the contract C is from a previous contract and that someone who gained access to it sent it to Bob in place of the actual contract. This scenario would be implausible. Alice
+would have to prove this with a previous contract. Also, contracts are most always dated which makes the case very difficult to pull off.
+  
+5. To compute Sig_CA, the CA would get the hash digest of the message bob.com || P_B and then use the public key encryption function to with their secret key S_CA. That is they would
+get D = H(bob.com || P_B) and Sig_CA = E(S_CA, D). Now the CA has Sig_CA and Bob could verify this signature by using the P_CA and the hash function.
+
+6. Bob sending Alice Cert_B is not enough for Alice to believe she's talking to Bob. This is because others may have access to Cert_B and could send it to Alice
+in trying to impersonate Bob. However, only Bob still has S_B. Now for Alice to make she is talking to Bob she could send Bob a random number R to encrypt with his secret key S_B. When Bob
+recieves R he would use his secret key to get E(S_B, R). Then Bob would send this back to Alice. Alice could then use P_B from the certificate to get E(P_B, E(S_B, R)) = R. Now Alice knows that
+she is talking to the person with S_B which is Bob. There is still a possibility of a person in the middle or eavesdroppers, but Alice knows that she is talking to Bob. No other person could have
+sent back E(S_B, R) that is decrpyted with E and P_B except Bob.
+
+7. One way this certificate-based trust system could be subverted is if Mal could convince the CA that she is Bob and give them a public key to which she
+knows the corresponding private key. Then Mal would be linked with bob.com in the certificate. Thus, Alice would think she is talking to Bob when she is actually talking to Mal because Mal knows the private key for the certificate that Mal
+tricked the CA into giving her. A second way this certificate-based trust system could be subverted is if Mal somehow got ahold of Bob's secret key. If this happens, then Mal could easily impersonate Bob by sending Alice messages that are encrypted
+with the secret key, that corresponds to the public key of the certificate.
