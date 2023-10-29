@@ -1,0 +1,40 @@
+Miles Hoene-Langdon
+
+Part 1
+Total time: 0.44s
+Number of hashes computed: 267516
+Passwords cracked: 2734
+Time per hash computed: 0.00000164s/hash
+Time per password cracked: 0.000161s/password
+Passwords cracked per number of hashes computed: 0.0102passwords/hash
+
+Part 2
+Total time: 103117.00s
+Number of hashes computed: 71545924020
+Passwords cracked: 2734
+Time per hash computed: 0.000001441s/hash
+Time per password cracked: 37.72s/password
+Passwords cracked per number of hashes computed: 0.00000003821passwords/hash
+
+Part 3
+Total time: 1186.91s
+Number of hashes computed: 731388744
+Passwords cracked: 2734
+Time per hash computed: 0.00000162282s/hash
+Time per password cracked: 0.434129s/passwords
+Passwords cracked per number of hashes computed: 0.000003738passwords/hash
+
+Analysis:
+    Through each part of this assignment, my time per hash computed stayed around the same level. It was a little bit lower
+on part 2 but not by a significant amount. Each part had similar average times per hash because in each the hash operation is the same. A string
+is converted into hash digest using SHA-256. There is no reason that they should differ. Now for time per password crack did signigcantly change
+between phases. The fastest of the three parts was part 1. This is followed by part 3 which was 2696 times slower. Lastly, part two was about 87
+times slower that part 3 and 234285 times slower than part 1. Part three was 2696 times slower than part 1 becasue essentially part 1 was done for
+each of the 2734 different passwords with different salt values concatonated to the words. Part three was 234285 times slower than part 1 because
+essentially part 1 had to be done for each of the 267516 different words in words.txt with one word concatenated to the beginning. 
+    Each hash is 256-bits. Thus, the memory required to  to precompute all the hashes for part 1 is 68484096 bits. The memory required to  to precompute
+all the hashes for part 2 is 18320591425536 bits. Lastly, the memory required to  to precompute all the hashes for part 3 is 187235518464 bits.
+    Passwords should be stored in hashes because even in the event that the database is leaked, passwords are not directly exposed (the hash function
+would need to be know). Also, stroing passwords in hashes slows down attackers who want to discover passwords as it is difficult to interpret the input
+to a hash given it's digest. This practice also limits insider attacks as people who have direct access to the password database still do not know the
+passwords themselves. 
